@@ -280,6 +280,9 @@
 #+END_SRC
 ** Use-Package
 #+BEGIN_SRC emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
   (require 'use-package)
   (setq use-package-always-ensure t)
 #+END_SRC
@@ -318,10 +321,11 @@ Hydras are useful for custom commands
 ** Main Theme
     Currently using moe-theme
 #+BEGIN_SRC emacs-lisp
-;;  (require 'moe-theme)
-;;  (moe-theme-set-color 'black)
-;;  (load-theme 'moe-dark)
-(load-theme 'monokai)
+  ;;  (require 'moe-theme)
+  ;;  (moe-theme-set-color 'black)
+  ;;  (load-theme 'moe-dark)
+  (use-package monokai-theme
+    :config (load-theme 'monokai))
 
 #+END_SRC
 
@@ -1098,12 +1102,12 @@ Better screen management
 
   (use-package evil-matchit
     :ensure evil
-    :init (global-evil-matchit-mode 1))
+    :config (global-evil-matchit-mode 1))
 
 
   (use-package evil-surround
     :ensure evil
-    :init (global-evil-surround-mode 1))
+    :config (global-evil-surround-mode 1))
 
 
   (use-package evil-smartparens
