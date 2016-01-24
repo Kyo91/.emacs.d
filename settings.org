@@ -1,10 +1,11 @@
 #+TITLE:  My Emacs Customizations
 * Basic Setup Things
-   These things should never break my init, and are generally small things for load-up
+  These things should never break my init, and are generally small things for load-up
 ** Init
 #+BEGIN_SRC emacs-lisp
   (setq my-emacsd (file-name-as-directory "~/.emacs.d"))
-  (add-to-list 'load-path "/usr/share/emacs24/site-lisp/mu4e")
+  ;; (add-to-list 'load-path "/usr/share/emacs24/site-lisp/mu4e")
+  ;; (add-to-list 'load-path "/home/sam/.opam/4.02.1/share/emacs/site-lisp/")
   (setq inhibit-startup-message t)
   (column-number-mode 1)
   (setq sentence-end-double-space nil)
@@ -918,6 +919,40 @@ Better screen management
 
 #+END_SRC
 *** Julia
+** Ocaml
+#+BEGIN_SRC emacs-lisp
+  (use-package merlin
+    :ensure tuareg
+    :init (setq opam-share (substring (shell-command-to-string "opam config var share 2> /dev/null") 0 -1))
+    (setq merlin-command 'opam)
+    ;; Setup environment variables using opam
+    (dolist (var (car (read-from-string (shell-command-to-string "opam config env --sexp"))))
+      (setenv (car var) (cadr var)))
+
+    ;; Update the emacs path
+    (setq exec-path (append (parse-colon-path (getenv "PATH"))
+                            (list exec-directory)))
+
+    ;; Update the emacs load path
+    (add-to-list 'load-path (expand-file-name "../../share/emacs/site-lisp"
+                                              (getenv "OCAML_TOPLEVEL_PATH")))
+
+    ;; Automatically load utop.el
+    (autoload 'utop "utop" "Toplevel for OCaml" t)
+    :config (add-hook 'tuareg-mode-hook 'merlin-mode)
+    (autoload 'utop-minor-mode "utop" "Minor mode for utop" t)
+    (add-hook 'tuareg-mode-hook 'utop-minor-mode)
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends 'merlin-company-backend)))
+
+  (use-package flycheck-ocaml
+    :ensure merlin
+    :config
+    (setq merlin-error-after-save 't)
+
+    ;; Enable Flycheck checker
+    (flycheck-ocaml-setup))
+#+END_SRC
 * Network Programs
 ** Mail - Not in Use
 #    Currently using mu4e for mail-purposes
@@ -1197,7 +1232,7 @@ Better screen management
     (unless (boundp 'org-latex-classes)
       (setq org-latex-classes nil))
     :config
-    (setq 'org-export-with-toc nil)
+    (setq org-export-with-toc nil)
     (add-to-list 'org-latex-packages-alist
                  '("margin=0.5in" "geometry"))
     (add-to-list 'org-latex-classes
