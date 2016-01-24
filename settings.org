@@ -1201,7 +1201,7 @@ Better screen management
     (unless (boundp 'org-latex-classes)
       (setq org-latex-classes nil))
     :config
-    (setq 'org-export-with-toc nil)
+    (setq org-export-with-toc nil)
     (add-to-list 'org-latex-packages-alist
                  '("margin=0.5in" "geometry"))
     (add-to-list 'org-latex-classes
